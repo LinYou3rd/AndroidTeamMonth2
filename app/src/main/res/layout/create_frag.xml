@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="项目名称:"
+        android:textSize="18sp"
+        />
+
+    <EditText
+        android:id="@+id/createTitle"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/edit_background"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="目标筹款金额:"
+        android:textSize="18sp"
+        />
+
+    <EditText
+        android:id="@+id/createTargetMoney"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/edit_background" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="项目内容:"
+        android:textSize="18sp"
+        />
+
+    <EditText
+        android:id="@+id/createIntroduce"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/edit_background" />
+
+    <ImageView
+        android:id="@+id/imageSaveView"
+        android:layout_width="match_parent"
+        android:layout_height="187dp"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/imageSaveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="从相册选取项目相关照片"
+        />
+
+    <Button
+        android:id="@+id/createSureButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上传"
+        android:textSize="18sp"
+        />
+
+</LinearLayout>

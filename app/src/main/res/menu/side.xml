@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/changeInformation"
+            android:icon="@drawable/change"
+            android:title="身份信息改变"/>
+
+        <item
+            android:id="@+id/search"
+            android:icon="@drawable/search"
+            android:title="输入完整标题"/>
+
+        <item
+            android:id="@+id/admin"
+            android:icon="@drawable/admin"
+            android:title="审核哥该点的"/>
+
+        <item
+            android:id="@+id/create"
+            android:icon="@drawable/create"
+            android:title="创建"/>
+    </group>
+</menu>
