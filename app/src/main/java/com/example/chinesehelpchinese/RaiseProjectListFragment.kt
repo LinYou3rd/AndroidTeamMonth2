@@ -14,9 +14,8 @@ import kotlinx.android.synthetic.main.project_list_frag.*
 
 class RaiseProjectListFragment:Fragment() {
 
-//    private lateinit var recyclerView:RecyclerView
-//    private lateinit var list : List<RaiseProject>
-//    private lateinit var context: Context
+    private  var recyclerView:RecyclerView?=null
+    private  var list : List<RaiseProject>?=null
 
 
 
@@ -26,19 +25,24 @@ class RaiseProjectListFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.project_list_frag,container,false)
-        val context = view.context
-        val manager = LinearLayoutManager(context)
-        val myadapter = ProjectAdapter(context,UseActivity().getAllProject())
-
-//        recycleView.adapter=myadapter
-//        recycleView.layoutManager=manager
-//        recycleView.addItemDecoration(DividerItemDecoration(context,LinearLayoutManager.HORIZONTAL))
-//        val snapHelper = LinearSnapHelper()
-//        snapHelper.attachToRecyclerView(recycleView)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recyclerView=view.findViewById(R.id.recycleView)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val context = view?.context
+        val manager = LinearLayoutManager(context)
+        val myadapter = ProjectAdapter(context!!,UseActivity().getAllProject())
+
+        recycleView.adapter=myadapter
+        recycleView.layoutManager=manager
+        recycleView.addItemDecoration(DividerItemDecoration(context,LinearLayoutManager.HORIZONTAL))
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(recycleView)
     }
 }

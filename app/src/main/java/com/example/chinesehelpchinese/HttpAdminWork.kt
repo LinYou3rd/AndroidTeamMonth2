@@ -1,3 +1,3 @@
 package com.example.chinesehelpchinese
 
-data class HttpAdminWork(val Title:String,val Mode: String,val PASS:String,val Token: String)
+data class HttpAdminWork(val Title:String,val Mode: String,val PASS:String)

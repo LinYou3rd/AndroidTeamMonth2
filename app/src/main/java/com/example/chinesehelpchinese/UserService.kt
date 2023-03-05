@@ -27,20 +27,20 @@ interface UserService {
     fun getTargetProject (@Query("Title") title:String,@Query("Token") token:String  ):Call<GetTargetProjectReturn>//获得单独一个
 
     @HTTP(method = "GET", path = "project/all", hasBody = true)
-    fun getAllProject (@Body data:HttpGteAll):Call<GetAllProjectReturn>
+    fun getAllProject (@Query("Token") token: String):Call<GetAllProjectReturn>
 
-    @HTTP(method = "GET", path = "admin", hasBody = true)
-    fun getProjectForAdmin(@Body data:HttpGetProjectForAdmin):Call<GetAllProjectReturn>
+    @GET("admin")
+    fun getProjectForAdmin(@Query("Token") token: String):Call<GetAllProjectReturn>
 
     @PUT("project")
-    fun giveMoney(@Body data: HttpGiveMoney):Call<ErrorReturn>//捐钱,实际修改项目
+    fun giveMoney(@Body data: HttpGiveMoney,@Query("Token") token: String):Call<ErrorReturn>//捐钱,实际修改项目
 
     @POST("project")
-    fun createProject(@Body data :HttpCreateProject):Call<ErrorReturn>
+    fun createProject(@Body data :HttpCreateProject,@Query("Token") token: String):Call<ErrorReturn>
 
     @PUT("project")
-    fun adminWork(@Body data :HttpAdminWork):Call<ErrorReturn>
+    fun adminWork(@Body data :HttpAdminWork,@Query("Token") token: String):Call<ErrorReturn>
 
     @DELETE("project")
-    fun deleteProject(@Body data:HttpDeleteProject):Call<ErrorReturn>//实际用于发现该项目钱筹集完毕发送该请求
+    fun deleteProject(@Body data:HttpDeleteProject,@Query("Token") token: String):Call<ErrorReturn>//实际用于发现该项目钱筹集完毕发送该请求
 }

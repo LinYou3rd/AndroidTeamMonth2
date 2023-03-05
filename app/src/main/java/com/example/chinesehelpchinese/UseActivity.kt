@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.util.Size
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -47,6 +48,7 @@ class UseActivity : AppCompatActivity() {
         lateinit var name: String
         lateinit var mode:String
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_use)
@@ -62,16 +64,6 @@ class UseActivity : AppCompatActivity() {
 
 
        replaceFragment(RaiseProjectListFragment())
-
-
-//        val layoutManager = GridLayoutManager(this,2)
-//        recycleView.layoutManager=layoutManager
-//        val adapter = ProjectAdapter(this,getAllProject())//针对传来的data做一个转化函数，最终目标是projectList，写下面去吧
-//        recycleView.adapter = adapter
-//        val snapHelper = LinearSnapHelper()
-//        snapHelper.attachToRecyclerView(recycleView)
-
-
 
         setSupportActionBar(toolbar)
         supportActionBar?.let {
@@ -103,13 +95,13 @@ class UseActivity : AppCompatActivity() {
             R.id.admin->{
                 if (mode!="管理员"){
                     Toast.makeText(this,"你谁啊",Toast.LENGTH_SHORT).show()
+                    true
+                }else{
+                    replaceFragment(AdminWorkFragment())
                     drawerLayout.closeDrawers()
                     true
                 }
                 //想想Fragment那边怎么搞，就是，审核的项目展示怎么整
-                replaceFragment(AdminWorkFragment())
-                drawerLayout.closeDrawers()
-                true
             }
 
             R.id.create->{
@@ -127,31 +119,28 @@ class UseActivity : AppCompatActivity() {
         }
     }
 
-
-
          fun getData():Pair<MutableList<RaiseProject>,String>{
+             println("getdata!")
         val projectList:MutableList<RaiseProject> = mutableListOf()
         val adminService = ServiceCreator.create(UserService::class.java)
-             val data = HttpGetProjectForAdmin(token)
-        adminService.getProjectForAdmin(data).enqueue(object :Callback<GetAllProjectReturn>{
+        adminService.getProjectForAdmin(token).enqueue(object :Callback<GetAllProjectReturn>{
 
             override fun onResponse(
                 call: Call<GetAllProjectReturn>,
                 response: Response<GetAllProjectReturn>
             ) {
-
                 if (response.body()?.code==200){
-                    Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
-
+                    //Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
                     val data = response.body()?.data
-
                     if (data != null) {
+                        println("data!")
                         for (str in data){
-                            val project = RaiseProject(str["Title"].toString(),str["Introduce"].toString(),
-                                str["TargetMoney"]?.toInt() ?: 0,str["NowMoney"]?.toInt()?:0,str["Image"].toString())
+                            val project = RaiseProject(str["title"].toString(),str["introduce"].toString(),
+                                str["targetMoney"]?.toInt() ?: 0,str["nowMoney"]?.toInt()?:0,str["image"].toString())
                             projectList.add(project)
                         }
                     }
+
                 }else{
                     Toast.makeText(this@UseActivity,"前端请求失败",Toast.LENGTH_SHORT).show()
                 }
@@ -162,13 +151,18 @@ class UseActivity : AppCompatActivity() {
             }
 
         })
+             if (projectList.size==0){
+                 projectList.add(RaiseProject("test","JUST_TEST",12,4,""))
+                 projectList.add(RaiseProject("test2","JUST_TEST2",12,4,""))
+             }
+             println("over!")
         return Pair(projectList,token)
     }
 
     fun createSureButtonClick(title: String,introduce:String,targetMoney:Int,image:String){
             val createService = ServiceCreator.create(UserService::class.java)
-            val data = HttpCreateProject(title,introduce,image,targetMoney,token)
-            createService.createProject(data).enqueue(object :Callback<ErrorReturn>{
+            val data = HttpCreateProject(title,introduce,image,targetMoney)
+            createService.createProject(data, token).enqueue(object :Callback<ErrorReturn>{
 
                 override fun onResponse(call: Call<ErrorReturn>, response: Response<ErrorReturn>) {
 //                    Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
@@ -184,7 +178,7 @@ class UseActivity : AppCompatActivity() {
 
     fun changeButtonClick(contact:String,name:String,identity:String){
             val userService = ServiceCreator.create(UserService::class.java)
-            val data = HttpChange(token,id,name,identity,contact)
+            val data = HttpChange(token,id.toUInt(),name,identity,contact)
             userService.changeInformation(data).enqueue(object :Callback<ChangeInformationReturn>{
 
                 override fun onResponse(
@@ -199,39 +193,10 @@ class UseActivity : AppCompatActivity() {
                 }
 
             })
-           replaceFragment(RaiseProjectListFragment())
+           //replaceFragment(RaiseProjectListFragment())
     }
 
-    fun searchButtonClick (title: String){
-        val userService = ServiceCreator.create(UserService::class.java)
-        userService.getTargetProject(title,token).enqueue(object :Callback<GetTargetProjectReturn>{
 
-            override fun onResponse(
-                call: Call<GetTargetProjectReturn>,
-                response: Response<GetTargetProjectReturn>
-            ) {
-                println(response.body()?.code)
-                if (response.body()?.code==200){
-                    val intent = Intent(this@UseActivity,RaiseProjectActivity::class.java)
-                    intent.putExtra("token",token)
-                    intent.putExtra("PROJECT_TITLE",response.body()?.title)
-                    intent.putExtra("PROJECT_INTRODUCE",response.body()?.introduce)
-                    intent.putExtra("PROJECT_NOW",response.body()?.nowMoney)
-                    intent.putExtra("PROJECT_IMAGE",response.body()?.image)
-                    intent.putExtra("PROJECT_TARGET",response.body()?.targetMoney)
-                    intent.putExtra("mode",mode)
-                    startActivity(intent)
-                }else{
-                    Toast.makeText(this@UseActivity,"请求发送成功，但失败了",Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<GetTargetProjectReturn>, t: Throwable) {
-                println("diu")
-                t.printStackTrace()
-            }
-        })
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar,menu)
@@ -244,8 +209,8 @@ class UseActivity : AppCompatActivity() {
         when(item.itemId){//这里也还没完工那...
             android.R.id.home->drawerLayout.openDrawer(GravityCompat.START)
             R.id.powerOff->{
-                val data  = HttpCreateProject("","","",0,"")
-                itemService.createProject(data)
+                val data  = HttpCreateProject("","","",0)
+                itemService.createProject(data,"")
                 finish()
             }
         }
@@ -284,14 +249,13 @@ class UseActivity : AppCompatActivity() {
     fun getImageToShare(imgString: String,imageView: ImageView){
         val byteArray = Base64.decode(imgString,Base64.DEFAULT)
         val bitmap=BitmapFactory.decodeByteArray(byteArray,0,byteArray.size)
-        Glide.with(imageView).load(bitmap)
+        Glide.with(imageView).load(bitmap).into(imageView)
     }
 
      fun getAllProject ():List<RaiseProject>{
         val userService = ServiceCreator.create(UserService::class.java)
         val projectList:MutableList<RaiseProject> = mutableListOf()
-        val data = HttpGteAll(token)
-        userService.getAllProject(data).enqueue(object :Callback<GetAllProjectReturn>{
+        userService.getAllProject(token).enqueue(object :Callback<GetAllProjectReturn>{
 
             override fun onResponse(
                 call: Call<GetAllProjectReturn>,
@@ -329,16 +293,10 @@ class UseActivity : AppCompatActivity() {
         return projectList
     }
 
-     fun replaceFragment (fragment: Fragment){
+     private fun replaceFragment (fragment: Fragment){
         val fragmentManager = supportFragmentManager
-         val hide = fragmentManager.findFragmentById(R.id.projectListLayout)
-        val transaction = fragmentManager.beginTransaction()
-         if (!fragment.isAdded){
-             transaction.add(R.id.projectListLayout,fragment)
-         }
-         transaction.show(fragment)
-         if (hide!=null)
-        transaction.hide(hide)
+         val transaction = fragmentManager.beginTransaction()
+         transaction.replace(R.id.projectListLayout,fragment)
         transaction.commit()
     }
 

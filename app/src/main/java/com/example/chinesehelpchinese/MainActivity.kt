@@ -85,14 +85,14 @@ class MainActivity : AppCompatActivity() {
         val data = HttpLogin(account,password,mode)
         val userService = ServiceCreator.create(UserService::class.java)
         userService.login(data).enqueue(object :Callback<LoginReturn> {
-            @SuppressLint("SuspiciousIndentation")
+
             override fun onResponse(call: Call<LoginReturn>, response: Response<LoginReturn>) {
 
                 if (response.body()?.code==200){
                     Toast.makeText(this@MainActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@MainActivity,UseActivity::class.java)
                     intent.putExtra("token",response.body()?.token)
-                    Log.d("UseInMainActivity",response.body()?.token.toString())
+                    Log.d("UseInMainActivity",response.body()?.id.toString())
                     intent.putExtra("id",response.body()?.id)
                     intent.putExtra("name",response.body()?.name)
                     intent.putExtra("mode",mode)

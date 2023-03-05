@@ -23,17 +23,17 @@
     <ImageView
         android:id="@+id/adminImageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        />
+        android:layout_height="268dp"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/adminContentView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:padding="15sp"
+        android:textColor="@color/black"
         android:textSize="18sp"
+        android:background="@drawable/edit_background"
         />
 
     <LinearLayout

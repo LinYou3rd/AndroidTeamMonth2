@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.admin_frag.*
@@ -17,24 +20,33 @@ class AdminWorkFragment:Fragment() {
 
     lateinit var projectList : MutableList<RaiseProject>
     lateinit var token :String
+    private var  titltView:TextView?=null
+    private var imageView:ImageView?=null
+    private var introduceView:TextView?=null
+    private var passButton:Button?=null
+    private var noPassButton:Button?=null
 
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        titltView=view.findViewById(R.id.adminTitleView)
+        imageView=view.findViewById(R.id.adminImageView)
+        introduceView=view.findViewById(R.id.adminContentView)
+        passButton=view.findViewById(R.id.pass)
+        noPassButton=view.findViewById(R.id.noPass)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         val (someA,someB)= UseActivity().getData()
         projectList=someA
         token=someB
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         var i = projectList.size
-        showWork(projectList[i])
-
-        pass.setOnClickListener {
+        showWork(projectList[i-1])
+        passButton?.setOnClickListener {
             val adminService = ServiceCreator.create(UserService::class.java)
-            val data = HttpAdminWork(projectList[i].Title,"管理员","true",token)
-            adminService.adminWork(data).enqueue(object :
+            val data = HttpAdminWork(projectList[i].Title,"管理员","true")
+            adminService.adminWork(data,token).enqueue(object :
                 retrofit2.Callback<ErrorReturn> {
                 override fun onResponse(call: Call<ErrorReturn>, response: Response<ErrorReturn>) {
 
@@ -46,17 +58,19 @@ class AdminWorkFragment:Fragment() {
 
             })
 
-            showWork(projectList[i-1])
             i--
             if (i==-1){
-                UseActivity().replaceFragment(RaiseProjectListFragment())
+               // UseActivity().replaceFragment(RaiseProjectListFragment())
+            }else{
+                showWork(projectList[i])
+                onResume()
             }
         }
 
-        noPass.setOnClickListener {
+        noPassButton?.setOnClickListener {
             val adminService = ServiceCreator.create(UserService::class.java)
-            val data = HttpAdminWork(projectList[i].Title,"管理员","false",token)
-            adminService.adminWork(data).enqueue(object :
+            val data = HttpAdminWork(projectList[i].Title,"管理员","false")
+            adminService.adminWork(data,token).enqueue(object :
                 retrofit2.Callback<ErrorReturn> {
                 override fun onResponse(call: Call<ErrorReturn>, response: Response<ErrorReturn>) {
 
@@ -68,18 +82,21 @@ class AdminWorkFragment:Fragment() {
 
             })
 
-            showWork(projectList[i-1])
             i--
             if (i==-1){
-                UseActivity().replaceFragment(RaiseProjectListFragment())
+                //UseActivity().replaceFragment(RaiseProjectListFragment())
+            }else{
+                showWork(projectList[i])
+                onResume()
             }
         }
     }
 
     private fun showWork(project: RaiseProject){
-        adminContentView.text=project.Introduce
-        adminTitleView.text=project.Title
-        UseActivity().getImageToShare(project.Image,adminImageView)
+        introduceView?.text=project.Introduce
+        println("0000")
+        titltView?.text=project.Title
+        UseActivity().getImageToShare(project.Image,imageView!!)
     }
 
     override fun onCreateView(
