@@ -67,6 +67,7 @@ class RaiseProjectActivity : AppCompatActivity() {
                 .setNegativeButton("取消"){_,_->
 
                 }.create().show()
+            onResume()
 
 
 //                    val dialog = MoneyDialogFragment()

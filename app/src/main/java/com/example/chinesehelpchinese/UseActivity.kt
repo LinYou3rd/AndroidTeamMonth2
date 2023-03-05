@@ -120,7 +120,7 @@ class UseActivity : AppCompatActivity() {
     }
 
          fun getData():Pair<MutableList<RaiseProject>,String>{
-             println("getdata!")
+             Log.d("ADMIN","进入获取数据的方法")
         val projectList:MutableList<RaiseProject> = mutableListOf()
         val adminService = ServiceCreator.create(UserService::class.java)
         adminService.getProjectForAdmin(token).enqueue(object :Callback<GetAllProjectReturn>{
@@ -133,7 +133,7 @@ class UseActivity : AppCompatActivity() {
                     //Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
                     val data = response.body()?.data
                     if (data != null) {
-                        println("data!")
+                        Log.d("ADMIN","开始解析数据")
                         for (str in data){
                             val project = RaiseProject(str["title"].toString(),str["introduce"].toString(),
                                 str["targetMoney"]?.toInt() ?: 0,str["nowMoney"]?.toInt()?:0,str["image"].toString())
@@ -155,7 +155,7 @@ class UseActivity : AppCompatActivity() {
                  projectList.add(RaiseProject("test","JUST_TEST",12,4,""))
                  projectList.add(RaiseProject("test2","JUST_TEST2",12,4,""))
              }
-             println("over!")
+             Log.d("ADMIN","方法结束，返回list")
         return Pair(projectList,token)
     }
 
@@ -165,7 +165,7 @@ class UseActivity : AppCompatActivity() {
             createService.createProject(data, token).enqueue(object :Callback<ErrorReturn>{
 
                 override fun onResponse(call: Call<ErrorReturn>, response: Response<ErrorReturn>) {
-//                    Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@UseActivity,response.body()?.message,Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onFailure(call: Call<ErrorReturn>, t: Throwable) {
@@ -173,7 +173,7 @@ class UseActivity : AppCompatActivity() {
                 }
 
             })
-           // replaceFragment(RaiseProjectListFragment())
+            //  replaceFragment(RaiseProjectListFragment())
     }
 
     fun changeButtonClick(contact:String,name:String,identity:String){

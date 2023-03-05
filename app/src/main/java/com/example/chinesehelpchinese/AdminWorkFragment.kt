@@ -3,6 +3,7 @@ package com.example.chinesehelpchinese
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,9 +94,9 @@ class AdminWorkFragment:Fragment() {
     }
 
     private fun showWork(project: RaiseProject){
-        introduceView?.text=project.Introduce
-        println("0000")
-        titltView?.text=project.Title
+
+        Log.d("ADMIN","用刚拿到的数据加载图片")
+
         UseActivity().getImageToShare(project.Image,imageView!!)
     }
 
